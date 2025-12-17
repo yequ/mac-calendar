@@ -1,0 +1,275 @@
+:root {
+  --primary-color: #007AFF;
+  /* 配合 vibrancy，背景色调低不透明度 */
+  --bg-color: rgba(255, 255, 255, 0.5);
+  --text-color: #333;
+  --text-secondary: #666;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --holiday-color: #ff3b30;
+  --work-color: #999;
+  --hover-bg: rgba(0, 0, 0, 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* 深色模式下，背景色更透明，依赖 vibrancy 提供深色背景 */
+    --bg-color: rgba(0, 0, 0, 0.3);
+    --text-color: #fff;
+    --text-secondary: #aaa;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --hover-bg: rgba(255, 255, 255, 0.1);
+  }
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: var(--text-color);
+  user-select: none;
+  overflow: hidden;
+}
+
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-color);
+  /* 移除 backdrop-filter，使用原生 vibrancy 性能更好且效果更原生 */
+  /* backdrop-filter: blur(20px); */
+  border-radius: 10px;
+  /* 移除阴影，popover 窗口通常不需要大阴影，或者由系统处理 */
+  /* box-shadow: 0 0 10px rgba(0,0,0,0.2); */
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.calendar-container {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.current-date-text {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.header-right {
+  display: flex;
+  gap: 8px;
+}
+
+button {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+button:hover {
+  background: var(--hover-bg);
+}
+
+button:active {
+  opacity: 0.7;
+}
+
+.week-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* 动画容器相关样式 */
+.calendar-body-mask {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  /* 确保子元素绝对定位相对于此 */
+}
+
+.calendar-slider {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.slider-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* 移除默认 transition，防止状态重置时发生回弹 */
+}
+
+.calendar-slider.animating .slider-item {
+  transition: transform 0.3s ease-in-out;
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  gap: 4px;
+  height: 100%;
+}
+
+/* 动画逻辑 */
+/* 默认状态：current 在中间，next 隐藏 */
+.slider-item.current {
+  transform: translateY(0);
+  z-index: 1;
+}
+
+.slider-item.next {
+  z-index: 2;
+  visibility: hidden; /* 默认隐藏，避免遮挡 */
+}
+
+/* 向上滑动 (看下个月) */
+/* current 向上移出 (-100%) */
+/* next 从下方移入 (100% -> 0) */
+.calendar-slider.slide-up .slider-item.current {
+  transform: translateY(-100%);
+}
+
+.calendar-slider.slide-up .slider-item.next {
+  visibility: visible;
+  transform: translateY(100%); /* 初始位置 */
+  animation: slideUpNext 0.3s forwards; /* 使用 animation 覆盖 transform */
+}
+
+/* 向下滑动 (看上个月) */
+/* current 向下移出 (100%) */
+/* next 从上方移入 (-100% -> 0) */
+.calendar-slider.slide-down .slider-item.current {
+  transform: translateY(100%);
+}
+
+.calendar-slider.slide-down .slider-item.next {
+  visibility: visible;
+  transform: translateY(-100%); /* 初始位置 */
+  animation: slideDownNext 0.3s forwards;
+}
+
+/* 定义关键帧以确保动画执行 */
+@keyframes slideUpNext {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes slideDownNext {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+
+.day-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  padding: 4px 0;
+  transition: background 0.2s;
+}
+
+.day-cell:hover {
+  background: var(--hover-bg);
+}
+
+.day-cell.not-current-month {
+  opacity: 0.3;
+}
+
+.day-cell.is-today {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.day-cell.is-selected {
+  background: var(--primary-color);
+  color: white !important;
+}
+
+.day-cell.is-selected .lunar-text {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.day-number {
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.lunar-text {
+  font-size: 10px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.lunar-text.is-festival,
+.lunar-text.is-term {
+  color: var(--primary-color);
+}
+
+.day-cell.is-selected .lunar-text.is-festival,
+.day-cell.is-selected .lunar-text.is-term {
+  color: white;
+}
+
+/* 节假日角标 */
+.holiday-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 10px;
+  padding: 1px 2px;
+  border-radius: 2px;
+  line-height: 1;
+  /* 移除缩放，直接使用 10px 字体 */
+  /* transform: scale(0.8); */
+  /* transform-origin: top right; */
+}
+
+.holiday-badge.holiday {
+  color: var(--holiday-color);
+}
+
+.holiday-badge.work {
+  color: var(--work-color);
+}
+
+.day-cell.is-selected .holiday-badge {
+  color: white;
+}
+
+.footer-info {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: center;
+}

@@ -1,0 +1,52 @@
+{
+  "name": "mac-calendar",
+  "version": "1.0.0",
+  "description": "A macOS calendar in menu bar with Lunar and Holiday support",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "electron:dev": "concurrently \"npm run dev\" \"wait-on tcp:5173 && NODE_OPTIONS='' electron .\"",
+    "dist": "npm run build && electron-builder"
+  },
+  "keywords": [],
+  "author": "Your Name",
+  "license": "ISC",
+  "dependencies": {
+    "lunar-javascript": "^1.6.12",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "classnames": "^2.3.2",
+    "dayjs": "^1.11.10"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "concurrently": "^8.2.2",
+    "electron": "^28.1.0",
+    "electron-builder": "^24.9.1",
+    "vite": "^5.0.10",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.example.mac-calendar",
+    "productName": "Mac Calendar",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false
+    }
+  }
+}
