@@ -1,6 +1,7 @@
 node_modules
 dist
 release
+.build
 .DS_Store
 .env
 .env.local
@@ -15,4 +16,4 @@ pnpm-debug.log*
 *.ntvs
 *.njsproj
 *.sln
-*.sw?node_modules
+*.sw?

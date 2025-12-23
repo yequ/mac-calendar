@@ -97,6 +97,7 @@ const Calendar = () => {
   const [slideDate, setSlideDate] = useState(null);
   const [slideDirection, setSlideDirection] = useState(null); // 'up' | 'down'
   const isAnimating = useRef(false);
+  const lastWheelTime = useRef(0);
 
   const handlePrevMonth = () => {
     if (isAnimating.current) return;
@@ -127,8 +128,14 @@ const Calendar = () => {
   const handleWheel = (e) => {
     if (isAnimating.current) return;
     
-    // 简单的防抖阈值
-    if (Math.abs(e.deltaY) < 20) return;
+    // 添加时间间隔限制，确保一次只能切换一个月
+    const now = Date.now();
+    if (now - lastWheelTime.current < 400) return;
+    
+    // 增加防抖阈值
+    if (Math.abs(e.deltaY) < 50) return;
+
+    lastWheelTime.current = now;
 
     if (e.deltaY > 0) {
       // 向下滚动 -> 看下个月 -> 内容向上移动

@@ -1,6 +1,6 @@
 {
   "name": "mac-calendar",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A macOS calendar in menu bar with Lunar and Holiday support",
   "main": "electron/main.js",
   "scripts": {
