@@ -99,6 +99,20 @@ const Calendar = () => {
   const isAnimating = useRef(false);
   const lastWheelTime = useRef(0);
 
+  // 监听窗口获得焦点事件，自动回到今天
+  useEffect(() => {
+    const handleFocus = () => {
+      const now = new Date();
+      setCurrentDate(now);
+      setSelectedDate(now);
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, []);
+
   const handlePrevMonth = () => {
     if (isAnimating.current) return;
     triggerAnimation('down');
