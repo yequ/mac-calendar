@@ -41,6 +41,10 @@ function createWindow() {
 
   window.loadURL(startUrl);
 
+  // 允许窗口在全屏应用之上显示
+  window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  window.setAlwaysOnTop(true, 'floating');
+
   // 失去焦点时隐藏窗口
   window.on('blur', () => {
     if (!window.webContents.isDevToolsOpened()) {
