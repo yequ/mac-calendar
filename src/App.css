@@ -191,6 +191,7 @@ button:active {
   position: relative;
   padding: 4px 0;
   transition: background 0.2s;
+  min-width: 0;
 }
 
 .day-cell:hover {
@@ -227,6 +228,10 @@ button:active {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+  width: 100%;
+  text-align: center;
+  padding: 0 2px;
+  box-sizing: border-box;
 }
 
 .lunar-text.is-festival,
